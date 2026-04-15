@@ -7,7 +7,6 @@ $datenbank = "gruppe21";
 $verbindung = mysqli_connect($host, $user, $passwort, $datenbank);
 
 if (!$verbindung) {
-    die("Verbindung fehlgeschlagen: " . mysqli_connect_error());
+    die("Fehler: " . mysqli_connect_error());
 }
-echo "Verbindung erfolgreich!";
 ?>
