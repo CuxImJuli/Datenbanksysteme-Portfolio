@@ -12,33 +12,32 @@ $password = $env['DBPASS'];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
-    $vorname = $_POST['vorname'];
-    $nachname = $_POST['nachname'];
+    $fname = $_POST['fname'];
+    $lname = $_POST['lname'];
     $teamname = $_POST['teamname'];
     $loginname = $_POST['loginname'];
-    $teamchef = $_POST['teamchef'];
-    $passwort = $_POST['passwort'];
+    $teamlead = $_POST['teamchef'];
+    $password = $_POST['password'];
 
     try {
         $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
         $options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
         ];
         
         $pdo = new PDO($dsn, $username, $password, $options);
 
-        $sql = "INSERT INTO Teamchef (Loginname, Vorname, Nachname, Passwort) VALUES (:loginname, :vorname, :nachname, :passwort)";
+        $sql = "INSERT INTO Teamchef (Loginname, Vorname, Nachname, Passwort) VALUES (:loginname, :fname, :lname, :password)";
         $sql1 = "INSERT INTO Team (Loginname, Teamname) VALUES (:teamname, :loginname)";
         $stmt = $pdo->prepare($sql);
         $stmt1 = $pdo->prepare($sql1);
 
         $stmt->execute([
             ':loginname' => $loginname,
-            ':vorname' => $vorname,
-            ':nachname' => $nachname,
-            ':passwort' => $passwort
+            ':fname' => $fname,
+            ':lname' => $lname,
+            ':password' => $password
             
         ]);
         
