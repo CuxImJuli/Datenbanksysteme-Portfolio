@@ -8,7 +8,7 @@ $env = parse_ini_file('.env');
 $host = 'localhost';
 $dbname = 'gruppe21';
 $username = 'gruppe21';
-$password = $env['DBPASS'];
+$dbpass = $env['DBPASS'];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
@@ -26,10 +26,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             PDO::ATTR_EMULATE_PREPARES   => false,
         ];
         
-        $pdo = new PDO($dsn, $username, $password, $options);
+        $pdo = new PDO($dsn, $username, $dbpass, $options);
 
         $sql = "INSERT INTO Teamchef (Loginname, Vorname, Nachname, Passwort) VALUES (:loginname, :fname, :lname, :password)";
-        $sql1 = "INSERT INTO Team (Loginname, Teamname) VALUES (:teamname, :loginname)";
+        $sql1 = "INSERT INTO Team (Loginname, Teamname) VALUES (:loginname, :teamname)";
         $stmt = $pdo->prepare($sql);
         $stmt1 = $pdo->prepare($sql1);
 
