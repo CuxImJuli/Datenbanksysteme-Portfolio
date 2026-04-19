@@ -1,5 +1,5 @@
 <?php
-
+// Header um CORS zu umgehen
 header("Access-Control-Allow-Origin: https://dbsnk.kirchbergnet.de");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 
@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $teamname = $_POST['teamname'];
     $loginname = $_POST['loginname'];
     $teamlead = $_POST['teamchef'];
-    $password = $_POST['password'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
     try {
         $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
@@ -27,12 +27,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ];
         
         $pdo = new PDO($dsn, $username, $dbpass, $options);
-
+        // Schutz vor SQL-Injection durch Prepared Statements
         $sql = "INSERT INTO Teamchef (Loginname, Vorname, Nachname, Passwort) VALUES (:loginname, :fname, :lname, :password)";
         $sql1 = "INSERT INTO Team (Loginname, Teamname) VALUES (:loginname, :teamname)";
         $stmt = $pdo->prepare($sql);
         $stmt1 = $pdo->prepare($sql1);
-
+        
         $stmt->execute([
             ':loginname' => $loginname,
             ':fname' => $fname,
