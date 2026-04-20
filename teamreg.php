@@ -5,43 +5,23 @@ require_once __DIR__ . '/process.php';
 header("Access-Control-Allow-Origin: https://dbsnk.kirchbergnet.de");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 
-function registerTeam(PDO $pdo, string $loginname, string $fname, string $lname, string $password, string $teamname): void {
-    // Schutz vor SQL-Injection durch Prepared Statements
-    $stmt = $pdo->prepare(
-        "INSERT INTO Teamchef (Loginname, Vorname, Nachname, Passwort) VALUES (:loginname, :fname, :lname, :password)"
-    );
-    $stmt->execute([
-        ':loginname' => $loginname,
-        ':fname'     => $fname,
-        ':lname'     => $lname,
-        ':password'  => $password,
-    ]);
-
-    $stmt1 = $pdo->prepare(
-        "INSERT INTO Team (Loginname, Teamname) VALUES (:loginname, :teamname)"
-    );
-    $stmt1->execute([
-        ':loginname' => $loginname,
-        ':teamname'  => $teamname,
-    ]);
-}
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $fname     = $_POST['fname'];
-    $lname     = $_POST['lname'];
-    $teamname  = $_POST['teamname'];
-    $loginname = $_POST['loginname'];
-    $password  = password_hash($_POST['password'], PASSWORD_DEFAULT);
-
     try {
         $pdo = connectToDatabase();
 
-        if (checkTeamExists($pdo, $teamname)) {
+        if (checkTeamExists($pdo, $_POST['teamname'])) {
             echo "Team existiert bereits";
             exit;
         }
 
-        registerTeam($pdo, $loginname, $fname, $lname, $password, $teamname);
+        registerUser($pdo, 'team', [
+            'loginname' => $_POST['loginname'],
+            'fname'     => $_POST['fname'],
+            'lname'     => $_POST['lname'],
+            'password'  => $_POST['password'],
+            'teamname'  => $_POST['teamname'],
+        ]);
+
         echo "Ihr Team wurde erfolgreich angelegt";
 
     } catch (PDOException $e) {
