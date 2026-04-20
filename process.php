@@ -26,25 +26,52 @@ function validatePasswort(string $loginname, string $password, PDO $pdo): bool {
     return $user && password_verify($password, $user['Passwort']);
 }
 
-// Registriert einen neuen Teamchef und legt das zugehörige Team an
-function registerTeam(PDO $pdo, string $loginname, string $fname, string $lname, string $password, string $teamname): void {
-    // Schutz vor SQL-Injection durch Prepared Statements
-    $stmt = $pdo->prepare(
-        "INSERT INTO Teamchef (Loginname, Vorname, Nachname, Passwort) VALUES (:loginname, :fname, :lname, :password)"
-    );
-    $stmt->execute([
-        ':loginname' => $loginname,
-        ':fname'     => $fname,
-        ':lname'     => $lname,
-        ':password'  => $password,
-    ]);
+// Blanket Funktion zur Anlegung verschiedener Nutzer
+function registerUser(PDO $pdo, string $type, array $data): void {
+    if (isset($data['password'])) {
+        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+    }
+    try {
+        switch ($type) {
+            case 'team':
+                $stmt = $pdo->prepare("INSERT INTO Teamchef (Loginname, Vorname, Nachname, Passwort) 
+                                       VALUES (:loginname, :fname, :lname, :password)");
+                $stmt->execute([
+                    ':loginname' => $data['loginname'],
+                    ':fname'     => $data['fname'],
+                    ':lname'     => $data['lname'],
+                    ':password'  => $data['password']
+                ]);
 
-    $stmt1 = $pdo->prepare(
-        "INSERT INTO Team (Loginname, Teamname) VALUES (:loginname, :teamname)"
-    );
-    $stmt1->execute([
-        ':loginname' => $loginname,
-        ':teamname'  => $teamname,
-    ]);
+                $stmt1 = $pdo->prepare("INSERT INTO Team (Teamname, Loginname) VALUES (:teamname, :loginname)");
+                $stmt1->execute([
+                    ':teamname'  => $data['teamname'],
+                    ':loginname' => $data['loginname']
+                ]);
+                break;
+
+            case 'veranstalter':
+                $stmt = $pdo->prepare("INSERT INTO Rennveranstalter (Name, Passwort) VALUES (:name, :password)");
+                $stmt->execute([
+                    ':name'     => $data['name'],
+                    ':password' => $data['password']
+                ]);
+                break;
+
+            case 'sponsor':
+                $stmt = $pdo->prepare("INSERT INTO Sponsor (SponsorID, Name, Passwort) VALUES (:id, :name, :password)");
+                $stmt->execute([
+                    ':id'       => $data['id'],
+                    ':name'     => $data['name'],
+                    ':password' => $data['password']
+                ]);
+                break;
+
+            default:
+                throw new Exception("Unbekannter Registrierungstyp: " . $type);
+        }
+    } catch (PDOException $e) {
+        die("Fehler bei der Registrierung: " . $e->getMessage());
+    }
 }
 ?>
