@@ -25,26 +25,4 @@ function validatePasswort(string $loginname, string $password, PDO $pdo): bool {
     $user = $stmt->fetch();
     return $user && password_verify($password, $user['Passwort']);
 }
-
-// Registriert einen neuen Teamchef und legt das zugehörige Team an
-function registerTeam(PDO $pdo, string $loginname, string $fname, string $lname, string $password, string $teamname): void {
-    // Schutz vor SQL-Injection durch Prepared Statements
-    $stmt = $pdo->prepare(
-        "INSERT INTO Teamchef (Loginname, Vorname, Nachname, Passwort) VALUES (:loginname, :fname, :lname, :password)"
-    );
-    $stmt->execute([
-        ':loginname' => $loginname,
-        ':fname'     => $fname,
-        ':lname'     => $lname,
-        ':password'  => $password,
-    ]);
-
-    $stmt1 = $pdo->prepare(
-        "INSERT INTO Team (Loginname, Teamname) VALUES (:loginname, :teamname)"
-    );
-    $stmt1->execute([
-        ':loginname' => $loginname,
-        ':teamname'  => $teamname,
-    ]);
-}
 ?>
