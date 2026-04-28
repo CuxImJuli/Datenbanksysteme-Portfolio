@@ -1,9 +1,12 @@
 <?php
+/**
+ * Author: Noah S. Kipp
+ */
 session_start();
 require_once __DIR__ . '/process.php';
 
 if (empty($_SESSION['loginname'])) {
-    header("Location: index.php");
+    header("Location: teamlogin.php");
     exit;
 }
 
