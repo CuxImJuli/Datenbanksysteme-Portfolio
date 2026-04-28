@@ -21,7 +21,7 @@ try {
     }
 
     $stmt = $pdo->prepare(
-        "SELECT `Mitarbeiter-ID`, Teamname FROM Fahrer WHERE Teamname = :teamname ORDER BY `Mitarbeiter-ID`"
+        "SELECT `Mitarbeiter_ID`, Teamname FROM Fahrer WHERE Teamname = :teamname ORDER BY `Mitarbeiter_ID`"
     );
     $stmt->execute([':teamname' => $teamname]);
     $fahrer = $stmt->fetchAll(PDO::FETCH_ASSOC);

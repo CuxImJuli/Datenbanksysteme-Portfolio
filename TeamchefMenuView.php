@@ -6,7 +6,7 @@
 </head>
 <body>
     <h1>Teamchef Menü</h1>
-    <p>Eingeloggt als: <?= htmlspecialchars($loginname) ?> | Team: <?= htmlspecialchars($teamname) ?> | <a href="logout.php">Abmelden</a></p>
+    <p>Eingeloggt als: <?= htmlspecialchars($loginname) ?> | Team: <?= htmlspecialchars($teamname) ?></p>
 
     <hr>
 
