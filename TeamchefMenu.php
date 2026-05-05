@@ -2,9 +2,11 @@
 /**
  * Author: Noah S. Kipp
  */
+// Starten der Session und Einbinden der notwendigen Funktionen
 session_start();
 require_once __DIR__ . '/process.php';
 
+// Überprüfen, ob der Benutzer eingeloggt ist
 if (empty($_SESSION['loginname'])) {
     header("Location: teamlogin.php");
     exit;
@@ -14,15 +16,16 @@ $loginname = $_SESSION['loginname'];
 
 try {
     $pdo = connectToDatabase();
-
+    // Abfrage, ob Teamchef existiert und das dazugehörige Team auslesen
     $stmt = $pdo->prepare("SELECT Teamname FROM Team WHERE Loginname = :loginname LIMIT 1");
     $stmt->execute([':loginname' => $loginname]);
     $teamname = $stmt->fetchColumn();
 
+    // Fehlermeldung, falls Teamchef nicht existiert
     if (!$teamname) {
         die("Kein Team für diesen Teamchef gefunden.");
     }
-
+    // Fahrer des zum Teamchef gehörigen Teams abfragen
     $stmt = $pdo->prepare(
         "SELECT Mitarbeiter_ID, Teamname FROM Fahrer WHERE Teamname = :teamname ORDER BY Mitarbeiter_ID"
     );

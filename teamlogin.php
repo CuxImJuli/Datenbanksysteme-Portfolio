@@ -2,15 +2,18 @@
 /**
  * Author: Noah S. Kipp
  */
+// Starten der Session und Einbinden der notwendigen Funktionen
 session_start();
 require_once __DIR__ . '/process.php';
 
+// Setzen der CORS-Header
 header("Access-Control-Allow-Origin: https://dbsnk.kirchbergnet.de");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 
 $login_error_message = "";
 $reg_message = "";
 
+// Überprüfen, ob die Anfrage eine POST-Anfrage ist und anschließend Team-Login, ansonsten Team-Registrierung
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $pdo = connectToDatabase();
@@ -61,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1>Team Bereich</h1>
     <hr>
     
+    <!-- Formulare zur Registrierung und Anmeldung von Teams, als Tabelle zur übersichtlichen Darstellung -->
     <table>
         <tr>
             <td style="vertical-align:top; padding-right:50px;">
@@ -87,11 +91,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <!-- TRENNLINIE -->
             <td style="border-left: 1px solid black; padding-right:50px;"></td>
-
             <td style="vertical-align:top; padding-left:50px;">
                 <h2>Team anmelden</h2>
                 <?php if ($login_error_message): ?>
-                    <p style="color: red;"><?= htmlspecialchars($login_error_message) ?></p>
+                    <p><strong><?= htmlspecialchars($login_error_message) ?></strong></p>
                 <?php endif; ?>
                 <form action="teamlogin.php" method="post">
                     <input type="hidden" name="action" value="team_login">

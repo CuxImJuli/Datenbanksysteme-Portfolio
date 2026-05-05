@@ -2,30 +2,36 @@
 /**
  * Author: Noah S. Kipp
  */
+// Starten der Session und Einbinden der notwendigen Funktionen
 session_start();
 require_once __DIR__ . '/process.php';
 
+// Überprüfen, ob der Benutzer eingeloggt ist
 if (empty($_SESSION['loginname'])) {
     header("Location: teamlogin.php");
     exit;
 }
-
+ 
+// Überprüfen, ob die Anfrage eine POST-Anfrage ist, anschließende Verweisung auf das Teamchef-Menü
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: teamchefmenu.php");
     exit;
 }
 
+// Speichern der $_POST-Werte in Variablen und anschließendes Trimmen der Eingaben
 $mitarbeiterID = trim($_POST['mitarbeiterID'] ?? '');
 $teamname      = trim($_POST['teamname']      ?? '');
 $datum         = trim($_POST['datum']         ?? '');
 $kilometer     = $_POST['kilometer']          ?? '';
 $zielname      = trim($_POST['zielname']      ?? '');
 
+// Überprüfen, ob die notwendigen Werte vorhanden sind, ansonsten Verweisung auf das Teamchef-Menü
 if (!$mitarbeiterID || !$teamname || !$datum || $kilometer === '' || !$zielname) {
     header("Location: teamchefmenu.php?status=fehler");
     exit;
 }
 
+// Ausführen der Speicherung und anschließende Verweisung auf das Teamchef-Menü
 try {
     $pdo = connectToDatabase();
 

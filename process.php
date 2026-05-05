@@ -3,6 +3,7 @@
  * Author: Noah S. Kipp
  */
 
+// Funktion zum Datenbankverbindung aufbauen
 function connectToDatabase(): PDO {
     $env = parse_ini_file(__DIR__ . '/.env');
     $dsn = "mysql:host=localhost;dbname=gruppe21;charset=utf8mb4";
@@ -13,7 +14,7 @@ function connectToDatabase(): PDO {
     return new PDO($dsn, 'gruppe21', $env['DBPASS'], $options);
 }
 
-
+// Funktion zum Passwort überprüfen
 function validatePasswort(string $loginname, string $password, PDO $pdo): bool {
     $stmt = $pdo->prepare("SELECT Loginname, Passwort FROM Teamchef WHERE Loginname = :loginname");
     $stmt->execute([':loginname' => $loginname]);
@@ -21,6 +22,7 @@ function validatePasswort(string $loginname, string $password, PDO $pdo): bool {
     return $user && password_verify($password, $user['Passwort']);
 }
 
+// Kapselfunktion zur Registrierung von Nutzern 
 function registerUser(PDO $pdo, string $type, array $data): void {
     if (isset($data['password'])) {
         $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);

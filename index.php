@@ -1,11 +1,14 @@
 <?php
 
+// Starten der Session und Einbinden der notwendigen Funktionen
 session_start();
 require_once __DIR__ . '/process.php';
 
+// Setzen der CORS-Header
 header("Access-Control-Allow-Origin: https://dbsnk.kirchbergnet.de");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 
+// Verarbeiten der POST-Anfragen je nach Formular
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $form_action = isset($_POST['form_action']) ? $_POST['form_action'] : '';
     switch($form_action) {
