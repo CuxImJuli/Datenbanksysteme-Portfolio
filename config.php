@@ -1,4 +1,7 @@
 <?php
+/**
+ * Author: Noah S. Kipp
+ */
 $host      = "localhost";   
 $user      = "gruppe21";    
 $passwort  = "JR^bs.6ZG{l]";

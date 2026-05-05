@@ -1,4 +1,7 @@
 <?php
+/**
+ * Author: Noah S. Kipp
+ */
 
 // Stellt eine Verbindung zur Datenbank her und gibt das PDO-Objekt zurück
 function connectToDatabase(): PDO {
