@@ -100,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <td style="border-left: 1px solid black; padding-right:50px;"></td>
 
             <td style="vertical-align:top; padding-left:50px;">
-                <h2>Rennveranstalter registrieren</h2>
+                <h2>Rennveranstalter anmelden</h2>
 
                 <form method="post" action="LoginVeran.php">
                     <input type="hidden" name="action" value="organizer_login">

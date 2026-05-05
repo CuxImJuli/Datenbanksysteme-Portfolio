@@ -13,11 +13,6 @@ function connectToDatabase(): PDO {
     return new PDO($dsn, 'gruppe21', $env['DBPASS'], $options);
 }
 
-function checkTeamExists(PDO $pdo, string $teamname): bool {
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM Team WHERE Teamname = :teamname");
-    $stmt->execute([':teamname' => $teamname]);
-    return $stmt->fetchColumn() > 0;
-}
 
 function validatePasswort(string $loginname, string $password, PDO $pdo): bool {
     $stmt = $pdo->prepare("SELECT Loginname, Passwort FROM Teamchef WHERE Loginname = :loginname");
@@ -33,19 +28,13 @@ function registerUser(PDO $pdo, string $type, array $data): void {
     try {
         switch ($type) {
             case 'team':
-                $stmt = $pdo->prepare("INSERT INTO Teamchef (Loginname, Vorname, Nachname, Passwort) 
-                                       VALUES (:loginname, :fname, :lname, :password)");
+                $stmt = $pdo->prepare("CALL p_registerTeamWithChef_nsk(:loginname, :fname, :lname, :password, :teamname)");
                 $stmt->execute([
                     ':loginname' => $data['loginname'],
                     ':fname'     => $data['fname'],
                     ':lname'     => $data['lname'],
-                    ':password'  => $data['password']
-                ]);
-
-                $stmt1 = $pdo->prepare("INSERT INTO Team (Teamname, Loginname) VALUES (:teamname, :loginname)");
-                $stmt1->execute([
-                    ':teamname'  => $data['teamname'],
-                    ':loginname' => $data['loginname']
+                    ':password'  => $data['password'],
+                    ':teamname'  => $data['teamname']
                 ]);
                 break;
 
@@ -70,7 +59,7 @@ function registerUser(PDO $pdo, string $type, array $data): void {
                 throw new Exception("Unbekannter Registrierungstyp: " . $type);
         }
     } catch (PDOException $e) {
-        die("Fehler bei der Registrierung: " . $e->getMessage());
+        throw $e;
     }
 }
 ?>

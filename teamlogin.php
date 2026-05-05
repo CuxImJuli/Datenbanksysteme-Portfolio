@@ -27,25 +27,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $login_error_message = "Login fehlgeschlagen. Bitte erneut versuchen.";
             }
         } elseif (isset($_POST['action']) && $_POST['action'] === 'team_register') {
-            if (checkTeamExists($pdo, $_POST['teamname'])) {
-                $reg_message = "Team existiert bereits.";
-            } else {
-                registerUser($pdo, 'team', [
-                    'loginname' => $_POST['loginname'],
-                    'fname'     => $_POST['fname'],
-                    'lname'     => $_POST['lname'],
-                    'password'  => $_POST['password'],
-                    'teamname'  => $_POST['teamname'],
-                ]);
-                $reg_message = "Ihr Team wurde erfolgreich angelegt!";
-            }
+            registerUser($pdo, 'team', [
+                'loginname' => $_POST['loginname'],
+                'fname'     => $_POST['fname'],
+                'lname'     => $_POST['lname'],
+                'password'  => $_POST['password'],
+                'teamname'  => $_POST['teamname'],
+            ]);
+            $reg_message = "Ihr Team wurde erfolgreich angelegt!";
         }
     } catch (PDOException $e) {
         if (isset($_POST['action']) && $_POST['action'] === 'team_login') {
             error_log("Login error: " . $e->getMessage());
             $login_error_message = "Ein Systemfehler ist aufgetreten.";
         } elseif (isset($_POST['action']) && $_POST['action'] === 'team_register') {
-            $reg_message = "Fehler: " . $e->getMessage();
+            if ($e->getCode() == 23000 || (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062)) {
+                $reg_message = "Team oder Loginname existiert bereits.";
+            } else {
+                $reg_message = "Fehler: " . $e->getMessage();
+            }
         }
     }
 }
