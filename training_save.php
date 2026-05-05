@@ -43,8 +43,12 @@ try {
 
     header("Location: teamchefmenu.php?status=ok");
 } catch (PDOException $e) {
-    error_log("Training insert error: " . $e->getMessage());
-    header("Location: teamchefmenu.php?status=fehler");
+    if ($e->getCode() == 45001) {
+        header("Location: teamchefmenu.php?status=fehler_doppelt");
+    } else {
+        error_log("Training insert error: " . $e->getMessage());
+        header("Location: teamchefmenu.php?status=fehler");
+    }
 }
 exit;
 ?>

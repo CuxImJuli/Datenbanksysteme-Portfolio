@@ -61,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1>Team Bereich</h1>
     <hr>
     
-    <!-- Tabelle damit beide Formulare nebeneinander stehen -->
     <table>
         <tr>
             <td style="vertical-align:top; padding-right:50px;">
