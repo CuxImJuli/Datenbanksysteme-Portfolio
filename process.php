@@ -71,4 +71,6 @@ function registerUser(PDO $pdo, string $type, array $data): void {
         throw $e;
     }
 }
+
+
 ?>
