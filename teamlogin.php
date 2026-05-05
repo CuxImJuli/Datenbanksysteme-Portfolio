@@ -30,14 +30,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $login_error_message = "Login fehlgeschlagen. Bitte erneut versuchen.";
             }
         } elseif (isset($_POST['action']) && $_POST['action'] === 'team_register') {
-            registerUser($pdo, 'team', [
-                'loginname' => $_POST['loginname'],
-                'fname'     => $_POST['fname'],
-                'lname'     => $_POST['lname'],
-                'password'  => $_POST['password'],
-                'teamname'  => $_POST['teamname'],
-            ]);
-            $reg_message = "Ihr Team wurde erfolgreich angelegt!";
+            if (checkTeamExists($pdo, $_POST['teamname'])) {
+                $reg_message = "Team existiert bereits.";
+            } else {
+                registerUser($pdo, 'team', [
+                    'loginname' => $_POST['loginname'],
+                    'fname'     => $_POST['fname'],
+                    'lname'     => $_POST['lname'],
+                    'password'  => $_POST['password'],
+                    'teamname'  => $_POST['teamname'],
+                ]);
+                $reg_message = "Ihr Team wurde erfolgreich angelegt!";
+            }
         }
     } catch (PDOException $e) {
         if (isset($_POST['action']) && $_POST['action'] === 'team_login') {

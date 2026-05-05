@@ -22,6 +22,13 @@ function validatePasswort(string $loginname, string $password, PDO $pdo): bool {
     return $user && password_verify($password, $user['Passwort']);
 }
 
+// Überprüft, ob ein Team mit dem angegebenen Namen bereits existiert
+function checkTeamExists(PDO $pdo, string $teamname): bool {
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM Team WHERE Teamname = :teamname");
+    $stmt->execute([':teamname' => $teamname]);
+    return $stmt->fetchColumn() > 0;
+}
+
 // Kapselfunktion zur Registrierung von Nutzern 
 function registerUser(PDO $pdo, string $type, array $data): void {
     if (isset($data['password'])) {
