@@ -66,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <td style="vertical-align:top; padding-left:50px;">
                 <h2>Teamchef anmelden</h2>
                 <?php if ($login_error_message): ?>
-                    <p style="color: red;"><?= htmlspecialchars($login_error_message) ?></p>
+                    <p><?= htmlspecialchars($login_error_message) ?></p>
                 <?php endif; ?>
                 <form action="teamlogin.php" method="post">
                     <input type="hidden" name="action" value="team_login">
@@ -120,11 +120,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h2>Sponsor registrieren</h2>
 
                 <?php if (!empty($fehler_reg)): ?>
-                    <p style="color:red;"><strong>Fehler:</strong> <?= $fehler_reg ?></p>
+                    <p><strong>Fehler:</strong> <?= $fehler_reg ?></p>
                 <?php endif; ?>
 
                 <?php if (!empty($erfolg_reg)): ?>
-                    <p style="color:green;"><strong><?= $erfolg_reg ?></strong></p>
+                    <p><strong><?= $erfolg_reg ?></strong></p>
                 <?php else: ?>
                 <form method="post" action="sponsor.php">
                     <input type="hidden" name="action" value="sponsor_register">
@@ -153,11 +153,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h2>Sponsor anmelden</h2>
 
                 <?php if (!empty($fehler_login)): ?>
-                    <p style="color:red;"><strong>Fehler:</strong> <?= $fehler_login ?></p>
+                    <p><strong>Fehler:</strong> <?= $fehler_login ?></p>
                 <?php endif; ?>
 
                 <?php if (!empty($erfolg_login)): ?>
-                    <p style="color:green;"><strong><?= $erfolg_login ?></strong></p>
+                    <p><strong><?= $erfolg_login ?></strong></p>
                     <a href="dashboard_sponsor.php">Zum Sponsor-Bereich</a>
                 <?php else: ?>
                 <form method="post" action="sponsor.php">

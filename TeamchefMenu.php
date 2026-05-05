@@ -51,11 +51,11 @@ try {
 
     <?php if (isset($_GET['status'])): ?>
         <?php if ($_GET['status'] === 'ok'): ?>
-            <p style="color: green;">Training erfolgreich eingetragen.</p>
+            <p><strong>Training erfolgreich eingetragen.</strong></p>
         <?php elseif ($_GET['status'] === 'fehler_doppelt'): ?>
-            <p style="color: red;">Fehler: Es darf nur 1 Training pro Tag eingetragen werden.</p>
+            <p><strong>Fehler: Es darf nur 1 Training pro Tag eingetragen werden.</strong></p>
         <?php else: ?>
-            <p style="color: red;">Fehler beim Eintragen des Trainings.</p>
+            <p><strong>Fehler beim Eintragen des Trainings.</strong></p>
         <?php endif; ?>
     <?php endif; ?>
 
