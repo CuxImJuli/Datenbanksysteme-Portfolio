@@ -24,7 +24,7 @@ try {
     }
 
     $stmt = $pdo->prepare(
-        "SELECT `Mitarbeiter_ID`, Teamname FROM Fahrer WHERE Teamname = :teamname ORDER BY `Mitarbeiter_ID`"
+        "SELECT Mitarbeiter_ID, Teamname FROM Fahrer WHERE Teamname = :teamname ORDER BY Mitarbeiter_ID"
     );
     $stmt->execute([':teamname' => $teamname]);
     $fahrer = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -41,12 +41,12 @@ try {
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Teamchef Menü</title>
+    <title>Teamchef Menü - Trainings Manager</title>
 </head>
 <body>
     <h1>Teamchef Menü</h1>
     <p>Eingeloggt als: <?= htmlspecialchars($loginname) ?> | Team: <?= htmlspecialchars($teamname) ?></p>
-
+    <a href="teampflege.php">[Zur Teampflege]</a> | <a href="logout.php">[Abmelden]</a>
     <hr>
 
     <?php if (isset($_GET['status'])): ?>
@@ -73,8 +73,8 @@ try {
         <select id="mitarbeiterID" name="mitarbeiterID" required>
             <option value="" disabled selected>– wählen –</option>
             <?php foreach ($fahrer as $f): ?>
-                <option value="<?= htmlspecialchars($f['Mitarbeiter-ID']) ?>">
-                    <?= htmlspecialchars($f['Mitarbeiter-ID']) ?>
+                <option value="<?= htmlspecialchars($f['Mitarbeiter_ID']) ?>">
+                    <?= htmlspecialchars($f['Mitarbeiter_ID']) ?>
                 </option>
             <?php endforeach; ?>
         </select><br><br>

@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (validatePasswort($loginname, $password, $pdo)) {
                 $_SESSION['loginname'] = $loginname;
-                header("Location: TeamchefMenu.php");
+                header("Location: teamchefmenu.php");
                 exit;
             } else {
                 $login_error_message = "Login fehlgeschlagen. Bitte erneut versuchen.";
@@ -64,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Tabelle damit beide Formulare nebeneinander stehen -->
     <table>
         <tr>
-            <!-- LINKE SPALTE: Registrierung -->
             <td style="vertical-align:top; padding-right:50px;">
                 <h2>Team registrieren</h2>
                 <?php if ($reg_message): ?>
@@ -90,7 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- TRENNLINIE -->
             <td style="border-left: 1px solid black; padding-right:50px;"></td>
 
-            <!-- RECHTE SPALTE: Login -->
             <td style="vertical-align:top; padding-left:50px;">
                 <h2>Team anmelden</h2>
                 <?php if ($login_error_message): ?>

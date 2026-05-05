@@ -11,7 +11,7 @@ if (empty($_SESSION['loginname'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: TeamchefMenu.php");
+    header("Location: teamchefmenu.php");
     exit;
 }
 
@@ -22,7 +22,7 @@ $kilometer     = $_POST['kilometer']          ?? '';
 $zielname      = trim($_POST['zielname']      ?? '');
 
 if (!$mitarbeiterID || !$teamname || !$datum || $kilometer === '' || !$zielname) {
-    header("Location: TeamchefMenu.php?status=fehler");
+    header("Location: teamchefmenu.php?status=fehler");
     exit;
 }
 
@@ -30,7 +30,7 @@ try {
     $pdo = connectToDatabase();
 
     $stmt = $pdo->prepare(
-        "INSERT INTO Training (`Mitarbeiter-ID`, Teamname, Datum, Kilometer, Zielname)
+        "INSERT INTO Training (Mitarbeiter_ID, Teamname, Datum, Kilometer, Zielname)
          VALUES (:mitarbeiterID, :teamname, :datum, :kilometer, :zielname)"
     );
     $stmt->execute([
@@ -41,10 +41,10 @@ try {
         ':zielname'      => $zielname,
     ]);
 
-    header("Location: TeamchefMenu.php?status=ok");
+    header("Location: teamchefmenu.php?status=ok");
 } catch (PDOException $e) {
     error_log("Training insert error: " . $e->getMessage());
-    header("Location: TeamchefMenu.php?status=fehler");
+    header("Location: teamchefmenu.php?status=fehler");
 }
 exit;
 ?>
