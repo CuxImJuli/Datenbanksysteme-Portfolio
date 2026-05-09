@@ -49,7 +49,7 @@ try {
 <body>
     <h1>Teamchef Menü</h1>
     <p>Eingeloggt als: <?= htmlspecialchars($loginname) ?> | Team: <?= htmlspecialchars($teamname) ?></p>
-    <a href="teampflege.php">[Zur Teampflege]</a> | <a href="teamchefauswertung.php">[Zur Auswertung]</a> | <a href="logout.php">[Abmelden]</a>
+    <a href="teampflege.php">[Zur Teampflege]</a> | <a href="auswertungsmenu.php">[Zur Auswertung]</a> | <a href="logout.php">[Abmelden]</a>
     <hr>
 
     <?php if (isset($_GET['status'])): ?>
