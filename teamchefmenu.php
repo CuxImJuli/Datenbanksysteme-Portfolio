@@ -2,9 +2,11 @@
 /**
  * Author: Noah S. Kipp
  */
+// Starten der Session und Einbinden der notwendigen Funktionen
 session_start();
 require_once __DIR__ . '/process.php';
 
+// Überprüfen, ob der Benutzer eingeloggt ist
 if (empty($_SESSION['loginname'])) {
     header("Location: teamlogin.php");
     exit;
@@ -14,15 +16,16 @@ $loginname = $_SESSION['loginname'];
 
 try {
     $pdo = connectToDatabase();
-
+    // Abfrage, ob Teamchef existiert und das dazugehörige Team auslesen
     $stmt = $pdo->prepare("SELECT Teamname FROM Team WHERE Loginname = :loginname LIMIT 1");
     $stmt->execute([':loginname' => $loginname]);
     $teamname = $stmt->fetchColumn();
 
+    // Fehlermeldung, falls Teamchef nicht existiert
     if (!$teamname) {
         die("Kein Team für diesen Teamchef gefunden.");
     }
-
+    // Fahrer des zum Teamchef gehörigen Teams abfragen
     $stmt = $pdo->prepare(
         "SELECT Mitarbeiter_ID, Teamname FROM Fahrer WHERE Teamname = :teamname ORDER BY Mitarbeiter_ID"
     );
@@ -46,14 +49,16 @@ try {
 <body>
     <h1>Teamchef Menü</h1>
     <p>Eingeloggt als: <?= htmlspecialchars($loginname) ?> | Team: <?= htmlspecialchars($teamname) ?></p>
-    <a href="teampflege.php">[Zur Teampflege]</a> | <a href="logout.php">[Abmelden]</a>
+    <a href="teampflege.php">[Zur Teampflege]</a> | <a href="auswertungsmenu.php">[Zur Auswertung]</a> | <a href="logout.php">[Abmelden]</a>
     <hr>
 
     <?php if (isset($_GET['status'])): ?>
         <?php if ($_GET['status'] === 'ok'): ?>
-            <p>Training erfolgreich eingetragen.</p>
+            <p><strong>Training erfolgreich eingetragen.</strong></p>
+        <?php elseif ($_GET['status'] === 'fehler_doppelt'): ?>
+            <p><strong>Fehler: Es darf nur 1 Training pro Tag eingetragen werden.</strong></p>
         <?php else: ?>
-            <p>Fehler beim Eintragen des Trainings.</p>
+            <p><strong>Fehler beim Eintragen des Trainings.</strong></p>
         <?php endif; ?>
     <?php endif; ?>
 

@@ -3,7 +3,7 @@
  * Author: Noah S. Kipp
  */
 
-// Stellt eine Verbindung zur Datenbank her und gibt das PDO-Objekt zurück
+// Funktion zum Datenbankverbindung aufbauen
 function connectToDatabase(): PDO {
     $env = parse_ini_file(__DIR__ . '/.env');
     $dsn = "mysql:host=localhost;dbname=gruppe21;charset=utf8mb4";
@@ -14,14 +14,7 @@ function connectToDatabase(): PDO {
     return new PDO($dsn, 'gruppe21', $env['DBPASS'], $options);
 }
 
-// Überprüft, ob ein Team mit dem angegebenen Namen bereits existiert
-function checkTeamExists(PDO $pdo, string $teamname): bool {
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM Team WHERE Teamname = :teamname");
-    $stmt->execute([':teamname' => $teamname]);
-    return $stmt->fetchColumn() > 0;
-}
-
-// Überprüft, ob das angegebene Passwort korrekt ist
+// Funktion zum Passwort überprüfen
 function validatePasswort(string $loginname, string $password, PDO $pdo): bool {
     $stmt = $pdo->prepare("SELECT Loginname, Passwort FROM Teamchef WHERE Loginname = :loginname");
     $stmt->execute([':loginname' => $loginname]);
@@ -29,7 +22,14 @@ function validatePasswort(string $loginname, string $password, PDO $pdo): bool {
     return $user && password_verify($password, $user['Passwort']);
 }
 
-// Blanket Funktion zur Anlegung verschiedener Nutzer
+// Überprüft, ob ein Team mit dem angegebenen Namen bereits existiert
+function checkTeamExists(PDO $pdo, string $teamname): bool {
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM Team WHERE Teamname = :teamname");
+    $stmt->execute([':teamname' => $teamname]);
+    return $stmt->fetchColumn() > 0;
+}
+
+// Kapselfunktion zur Registrierung von Nutzern 
 function registerUser(PDO $pdo, string $type, array $data): void {
     if (isset($data['password'])) {
         $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
@@ -37,19 +37,13 @@ function registerUser(PDO $pdo, string $type, array $data): void {
     try {
         switch ($type) {
             case 'team':
-                $stmt = $pdo->prepare("INSERT INTO Teamchef (Loginname, Vorname, Nachname, Passwort) 
-                                       VALUES (:loginname, :fname, :lname, :password)");
+                $stmt = $pdo->prepare("CALL p_registerTeamWithChef_nsk(:loginname, :fname, :lname, :password, :teamname)");
                 $stmt->execute([
                     ':loginname' => $data['loginname'],
                     ':fname'     => $data['fname'],
                     ':lname'     => $data['lname'],
-                    ':password'  => $data['password']
-                ]);
-
-                $stmt1 = $pdo->prepare("INSERT INTO Team (Teamname, Loginname) VALUES (:teamname, :loginname)");
-                $stmt1->execute([
-                    ':teamname'  => $data['teamname'],
-                    ':loginname' => $data['loginname']
+                    ':password'  => $data['password'],
+                    ':teamname'  => $data['teamname']
                 ]);
                 break;
 
@@ -74,7 +68,9 @@ function registerUser(PDO $pdo, string $type, array $data): void {
                 throw new Exception("Unbekannter Registrierungstyp: " . $type);
         }
     } catch (PDOException $e) {
-        die("Fehler bei der Registrierung: " . $e->getMessage());
+        throw $e;
     }
 }
+
+
 ?>

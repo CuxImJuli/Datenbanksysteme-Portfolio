@@ -1,11 +1,14 @@
 <?php
 
+// Starten der Session und Einbinden der notwendigen Funktionen
 session_start();
 require_once __DIR__ . '/process.php';
 
+// Setzen der CORS-Header
 header("Access-Control-Allow-Origin: https://dbsnk.kirchbergnet.de");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 
+// Verarbeiten der POST-Anfragen je nach Formular
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $form_action = isset($_POST['form_action']) ? $_POST['form_action'] : '';
     switch($form_action) {
@@ -66,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <td style="vertical-align:top; padding-left:50px;">
                 <h2>Teamchef anmelden</h2>
                 <?php if ($login_error_message): ?>
-                    <p style="color: red;"><?= htmlspecialchars($login_error_message) ?></p>
+                    <p><?= htmlspecialchars($login_error_message) ?></p>
                 <?php endif; ?>
                 <form action="teamlogin.php" method="post">
                     <input type="hidden" name="action" value="team_login">
@@ -100,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <td style="border-left: 1px solid black; padding-right:50px;"></td>
 
             <td style="vertical-align:top; padding-left:50px;">
-                <h2>Rennveranstalter registrieren</h2>
+                <h2>Rennveranstalter anmelden</h2>
 
                 <form method="post" action="LoginVeran.php">
                     <input type="hidden" name="action" value="organizer_login">
@@ -120,11 +123,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h2>Sponsor registrieren</h2>
 
                 <?php if (!empty($fehler_reg)): ?>
-                    <p style="color:red;"><strong>Fehler:</strong> <?= $fehler_reg ?></p>
+                    <p><strong>Fehler:</strong> <?= $fehler_reg ?></p>
                 <?php endif; ?>
 
                 <?php if (!empty($erfolg_reg)): ?>
-                    <p style="color:green;"><strong><?= $erfolg_reg ?></strong></p>
+                    <p><strong><?= $erfolg_reg ?></strong></p>
                 <?php else: ?>
                 <form method="post" action="sponsor.php">
                     <input type="hidden" name="action" value="sponsor_register">
@@ -153,11 +156,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h2>Sponsor anmelden</h2>
 
                 <?php if (!empty($fehler_login)): ?>
-                    <p style="color:red;"><strong>Fehler:</strong> <?= $fehler_login ?></p>
+                    <p><strong>Fehler:</strong> <?= $fehler_login ?></p>
                 <?php endif; ?>
 
                 <?php if (!empty($erfolg_login)): ?>
-                    <p style="color:green;"><strong><?= $erfolg_login ?></strong></p>
+                    <p><strong><?= $erfolg_login ?></strong></p>
                     <a href="dashboard_sponsor.php">Zum Sponsor-Bereich</a>
                 <?php else: ?>
                 <form method="post" action="sponsor.php">
