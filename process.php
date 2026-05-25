@@ -4,7 +4,7 @@
  */
 
 // Funktion zum Datenbankverbindung aufbauen
-function connectToDatabase(): PDO {
+function connectToDatabase() {
     $env = parse_ini_file(__DIR__ . '/.env');
     $dsn = "mysql:host=localhost;dbname=gruppe21;charset=utf8mb4";
     $options = [
@@ -15,7 +15,7 @@ function connectToDatabase(): PDO {
 }
 
 // Funktion zum Passwort überprüfen
-function validatePasswort(string $loginname, string $password, PDO $pdo): bool {
+function validatePasswort($loginname, $password, $pdo) {
     $stmt = $pdo->prepare("SELECT Loginname, Passwort FROM Teamchef WHERE Loginname = :loginname");
     $stmt->execute([':loginname' => $loginname]);
     $user = $stmt->fetch();
@@ -23,14 +23,14 @@ function validatePasswort(string $loginname, string $password, PDO $pdo): bool {
 }
 
 // Überprüft, ob ein Team mit dem angegebenen Namen bereits existiert
-function checkTeamExists(PDO $pdo, string $teamname): bool {
+function checkTeamExists($pdo, $teamname) {
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM Team WHERE Teamname = :teamname");
     $stmt->execute([':teamname' => $teamname]);
     return $stmt->fetchColumn() > 0;
 }
 
 // Kapselfunktion zur Registrierung von Nutzern 
-function registerUser(PDO $pdo, string $type, array $data): void {
+function registerUser($pdo, $type, $data) {
     if (isset($data['password'])) {
         $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
     }

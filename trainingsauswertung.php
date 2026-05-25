@@ -7,31 +7,31 @@ require_once __DIR__ . '/process.php';
 // Auswertungsklasse für Trainingskennzahlen
 class TeamAuswertung
 {
-    private string $teamname = '', $zielname = 'Alle Ziele', $startdatum = '', $enddatum = '';
-    private array $auswertung = [];
+    private $teamname = '', $zielname = 'Alle Ziele', $startdatum = '', $enddatum = '';
+    private $auswertung = [];
 
-    public function setTeamname(string $teamname): void
+    public function setTeamname($teamname)
     {
         $this->teamname = $teamname;
     }
 
-    public function setZielname(string $zielname): void
+    public function setZielname($zielname)
     {
         $this->zielname = $zielname;
     }
 
-    public function setZeitraum(string $startdatum, string $enddatum): void
+    public function setZeitraum($startdatum, $enddatum)
     {
         $this->startdatum = $startdatum;
         $this->enddatum = $enddatum;
     }
 
-    public function getAuswertung(): array
+    public function getAuswertung()
     {
         return $this->auswertung;
     }
 
-    public function ermittleKennzahlen(): void
+    public function ermittleKennzahlen()
     {
         $pdo = connectToDatabase();
         $params = [':tname' => $this->teamname];
@@ -91,7 +91,7 @@ class TeamAuswertung
     }
 
     // Median berechnen
-    private function berechneMedian(array $kmProMonat): float
+    private function berechneMedian($kmProMonat)
     {
         if (empty($kmProMonat)) {
             return 0.0;
@@ -107,7 +107,7 @@ class TeamAuswertung
     }
 
     // Standardabweichung berechnen
-    private function berechneStandartabweichung(array $kmProMonat): float
+    private function berechneStandartabweichung($kmProMonat)
     {
         if (empty($kmProMonat)) {
             return 0.0;
