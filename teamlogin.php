@@ -2,25 +2,19 @@
 /**
  * Author: Noah S. Kipp
  */
-// Starten der Session und Einbinden der notwendigen Funktionen
 session_start();
 require_once __DIR__ . '/process.php';
-
-// Setzen der CORS-Header
-header("Access-Control-Allow-Origin: https://dbsnk.kirchbergnet.de");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 
 $login_error_message = "";
 $reg_message = "";
 
-// Überprüfen, ob die Anfrage eine POST-Anfrage ist und anschließend Team-Login, ansonsten Team-Registrierung
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $pdo = connectToDatabase();
 
         if (isset($_POST['action']) && $_POST['action'] === 'team_login') {
             $loginname = trim($_POST['loginname'] ?? '');
-            $password  = $_POST['password'] ?? '';
+            $password = $_POST['password'] ?? '';
 
             if (validatePasswort($loginname, $password, $pdo)) {
                 $_SESSION['loginname'] = $loginname;
@@ -32,13 +26,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (isset($_POST['action']) && $_POST['action'] === 'team_register') {
             if (checkTeamExists($pdo, $_POST['teamname'])) {
                 $reg_message = "Team existiert bereits.";
+            } elseif (checkLoginExists($pdo, $_POST['loginname'])) {
+                $reg_message = "Loginname existiert bereits.";
             } else {
-                registerUser($pdo, 'team', [
-                    'loginname' => $_POST['loginname'],
-                    'fname'     => $_POST['fname'],
-                    'lname'     => $_POST['lname'],
-                    'password'  => $_POST['password'],
-                    'teamname'  => $_POST['teamname'],
+                $password_hash = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                $stmt = $pdo->prepare("CALL p_registerTeamWithChef(:loginname, :fname, :lname, :password, :teamname)");
+                $stmt->execute([
+                    ':loginname' => $_POST['loginname'],
+                    ':fname' => $_POST['fname'],
+                    ':lname' => $_POST['lname'],
+                    ':password' => $password_hash,
+                    ':teamname' => $_POST['teamname'],
                 ]);
                 $reg_message = "Ihr Team wurde erfolgreich angelegt!";
             }
@@ -48,11 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             error_log("Login error: " . $e->getMessage());
             $login_error_message = "Ein Systemfehler ist aufgetreten.";
         } elseif (isset($_POST['action']) && $_POST['action'] === 'team_register') {
-            if ($e->getCode() == 23000 || (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062)) {
-                $reg_message = "Team oder Loginname existiert bereits.";
-            } else {
-                $reg_message = "Fehler: " . $e->getMessage();
-            }
+            $reg_message = "Fehler: " . $e->getMessage();
         }
     }
 }
@@ -68,7 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1>Team Bereich</h1>
     <hr>
     
-    <!-- Formulare zur Registrierung und Anmeldung von Teams, als Tabelle zur übersichtlichen Darstellung -->
     <table>
         <tr>
             <td style="vertical-align:top; padding-right:50px;">
@@ -93,7 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </form>
             </td>
 
-            <!-- TRENNLINIE -->
             <td style="border-left: 1px solid black; padding-right:50px;"></td>
             <td style="vertical-align:top; padding-left:50px;">
                 <h2>Team anmelden</h2>

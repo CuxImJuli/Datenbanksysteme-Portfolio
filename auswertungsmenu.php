@@ -2,12 +2,10 @@
 /**
  * Author: Noah S. Kipp
  */
-// Starten der Session und Einbinden der notwendigen Funktionen
 session_start();
 require_once __DIR__ . '/process.php';
 require_once __DIR__ . '/trainingsauswertung.php';
 
-// Überprüfen, ob der Teamchef eingeloggt ist
 if (empty($_SESSION['loginname'])) {
     header("Location: teamlogin.php");
     exit;

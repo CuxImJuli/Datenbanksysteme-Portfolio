@@ -4,42 +4,43 @@
  */
 require_once __DIR__ . '/process.php';
 
-// Auswertungsklasse für Trainingskennzahlen
+/**
+ * Sammelt und berechnet Trainingskennzahlen (Summe, Median, Standardabweichung etc.)
+ * für ein spezifisches Team innerhalb eines definierten Zeitraums und Trainingsziels.
+ */
 class TeamAuswertung
 {
-    private string $teamname = '', $zielname = 'Alle Ziele', $startdatum = '', $enddatum = '';
-    private array $auswertung = [];
+    private $teamname = '', $zielname = 'Alle Ziele', $startdatum = '', $enddatum = '';
+    private $auswertung = [];
 
-    public function setTeamname(string $teamname): void
+    public function setTeamname($teamname)
     {
         $this->teamname = $teamname;
     }
 
-    public function setZielname(string $zielname): void
+    public function setZielname($zielname)
     {
         $this->zielname = $zielname;
     }
 
-    public function setZeitraum(string $startdatum, string $enddatum): void
+    public function setZeitraum($startdatum, $enddatum)
     {
         $this->startdatum = $startdatum;
         $this->enddatum = $enddatum;
     }
 
-    public function getAuswertung(): array
+    public function getAuswertung()
     {
         return $this->auswertung;
     }
 
-    public function ermittleKennzahlen(): void
+    public function ermittleKennzahlen()
     {
         $pdo = connectToDatabase();
         $params = [':tname' => $this->teamname];
 
-        // Kennzahlen pro Fahrer pro Monat
         $sql = "SELECT Mitarbeiter_ID, Kilometer, Datum FROM Training WHERE Teamname = :tname";
 
-        // Filterparameter hinzufügen
         if ($this->zielname !== 'Alle Ziele') {
             $sql .= " AND Zielname = :ziel";
             $params[':ziel'] = $this->zielname;
@@ -57,12 +58,10 @@ class TeamAuswertung
 
         $sql .= " ORDER BY Mitarbeiter_ID, Datum";
 
-        // SQL-Abfrage ausführen
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
         $fahrerData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Daten in geschachtelte Array strukturieren
         foreach ($fahrerData as $fahrer) {
             $mitarbeiterId = $fahrer['Mitarbeiter_ID'];
             $monat = date('Y-m', strtotime($fahrer['Datum']));
@@ -73,7 +72,6 @@ class TeamAuswertung
             ];
         }
 
-        // Kennzahlen berechnen
         foreach ($this->auswertung as $fahrerId => $monate) {
             foreach ($monate as $monat => $trainings) {
                 $kmProMonat = array_column($trainings, 'Kilometer');
@@ -90,8 +88,13 @@ class TeamAuswertung
         }
     }
 
-    // Median berechnen
-    private function berechneMedian(array $kmProMonat): float
+    /**
+     * Berechnet den Median aus einem Array von Kilometerwerten.
+     *
+     * @param float[] $kmProMonat
+     * @return float
+     */
+    private function berechneMedian($kmProMonat)
     {
         if (empty($kmProMonat)) {
             return 0.0;
@@ -106,8 +109,14 @@ class TeamAuswertung
         return (float) ($kmProMonat[$mitte - 1] + $kmProMonat[$mitte]) / 2.0;
     }
 
-    // Standardabweichung berechnen
-    private function berechneStandartabweichung(array $kmProMonat): float
+    /**
+     * Berechnet die Standardabweichung (Populations-Standardabweichung) 
+     * für ein Array von Kilometerwerten.
+     *
+     * @param float[] $kmProMonat
+     * @return float
+     */
+    private function berechneStandartabweichung($kmProMonat)
     {
         if (empty($kmProMonat)) {
             return 0.0;

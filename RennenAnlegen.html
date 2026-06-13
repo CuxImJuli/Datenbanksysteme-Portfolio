@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<!-- Autor: Linda Maaß -->
+
+<head>
+    <meta charset="UTF-8">
+    <title>Rennen anlegen</title>
+</head>
+
+<body>
+    <h1>Rennverwaltung</h1>
+
+    <!-- Formular zum Anlegen eines neuen Rennens -->
+    <h2>Neues Rennen anlegen</h2>
+
+    <?php if (!empty($_GET['created'])): ?>
+    <p style="color: green;"><strong>Rennen erfolgreich angelegt!</strong></p>
+    <?php endif; ?>
+
+    <form method="post" action="RennenAnlegen.php">
+        <label>Datum: <input type="date" name="date" min="<?= date('Y-m-d') ?>" required></label><br>
+        <label>Startort: <input type="text" name="start_location" required></label><br>
+        <label>Kilometer: <input type="number" step="0.01" name="distance_km" required></label><br>
+        <label>Höhenmeter: <input type="number" name="elevation_m" required></label><br>
+        <label>Max. Steigung (%): <input type="number" step="0.01" name="max_gradient" required></label><br>
+        <input type="submit" value="Speichern">
+    </form>
+
+    <hr>
+    <h2 id="ergebnisse">Rennergebnisse ansehen und eintragen</h2>
+
+    <p><a href="RennenErgebnisse.php">Zu den Rennergebnissen</a></p>
+
+
+    <p><a href="index.php">Zurück zur Startseite</a></p>
+</body>
+
+</html>

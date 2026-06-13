@@ -1,44 +1,56 @@
 <?php
 
-// Starten der Session und Einbinden der notwendigen Funktionen
+
+ob_start();
 session_start();
 require_once __DIR__ . '/process.php';
+include 'db.inc.php';
 
-// Setzen der CORS-Header
-header("Access-Control-Allow-Origin: https://dbsnk.kirchbergnet.de");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+// Variablen initialisieren damit sie im HTML immer verfügbar sind
+$fehler_reg = '';
+$erfolg_reg = '';
+$fehler_login = '';
+$erfolg_login = '';
 
-// Verarbeiten der POST-Anfragen je nach Formular
+
+// Autor: Noah Kipp
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $form_action = isset($_POST['form_action']) ? $_POST['form_action'] : '';
-    switch($form_action) {
+    switch ($form_action) {
         case 'team_register':
             include 'teamlogin.php';
             break;
         case 'organizer_register':
-            include 'RegVeran.php';
+            include 'RegistrierungVeranstalter.php';
             break;
         case 'organizer_login':
-            include 'LoginVeran.php';
+            include 'LoginVeranstalter.php';
             break;
         case 'sponsor_register':
-            include 'sponsor.php';
+            include 'register_sponsor_logik.inc.php';
             break;
         case 'sponsor_login':
-            include 'sponsor.php';
+            include 'login_sponsor_logik.inc.php';
             break;
         default:
             break;
     }
+} else {
+    // GET: damit Erfolgsmeldungen nach Redirect angezeigt werden
+    include 'register_sponsor_logik.inc.php';
+    include 'login_sponsor_logik.inc.php';
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="de">
+
 <body>
-    <h1>Willkommen, bitte wählen sie eine der folgenden Optionen:</h1>
+    <h1>Willkommen, bitte wählen Sie eine der folgenden Optionen:</h1>
     <hr>
 
+    <!-- Autor: Noah Kipp -->
+    <!-- Teamchef Bereich -->
     <table>
         <tr>
             <td style="vertical-align:top; padding-right:50px;">
@@ -63,13 +75,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </form>
             </td>
 
-            <!-- TRENNLINIE -->
             <td style="border-left: 1px solid black; padding-right:50px;"></td>
 
             <td style="vertical-align:top; padding-left:50px;">
                 <h2>Teamchef anmelden</h2>
                 <?php if ($login_error_message): ?>
-                    <p><?= htmlspecialchars($login_error_message) ?></p>
+                    <p style="color: red;"><?= htmlspecialchars($login_error_message) ?></p>
                 <?php endif; ?>
                 <form action="teamlogin.php" method="post">
                     <input type="hidden" name="action" value="team_login">
@@ -81,31 +92,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </form>
             </td>
         </tr>
-        
+
         <tr>
-            <td colspan="3"><hr></td>
+            <td colspan="3">
+                <hr>
+            </td>
         </tr>
 
+
+
+        <!-- Autor: Linda Maaß -->
+        <!-- Bereich des Rennveranstalters -->
         <tr>
             <td style="vertical-align:top; padding-right:50px;">
                 <h2>Rennveranstalter registrieren</h2>
-
-                <form method="post" action="RegVeran.php">
+                <form method="post" action="RegistrierungVeranstalter.php">
                     <input type="hidden" name="action" value="organizer_register">
                     <label>Name: <input type="text" name="organizer_name" required></label><br><br>
                     <label>Passwort: <input type="password" name="password" required></label><br><br>
                     <input type="submit" value="Registrieren">
                 </form>
-
             </td>
 
-            <!-- TRENNLINIE -->
             <td style="border-left: 1px solid black; padding-right:50px;"></td>
 
             <td style="vertical-align:top; padding-left:50px;">
                 <h2>Rennveranstalter anmelden</h2>
-
-                <form method="post" action="LoginVeran.php">
+                <form method="post" action="LoginVeranstalter.php">
                     <input type="hidden" name="action" value="organizer_login">
                     <label>Name: <input type="text" name="organizer_name" required></label><br><br>
                     <label>Passwort: <input type="password" name="password" required></label><br><br>
@@ -113,9 +126,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </form>
             </td>
         </tr>
-        
+
+
+
+        <!-- Autor: Julian Ploch -->
+        <!-- Sponsorbereich -->
         <tr>
-            <td colspan="3"><hr></td>
+            <td colspan="3">
+                <hr>
+            </td>
         </tr>
 
         <tr>
@@ -123,63 +142,69 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h2>Sponsor registrieren</h2>
 
                 <?php if (!empty($fehler_reg)): ?>
-                    <p><strong>Fehler:</strong> <?= $fehler_reg ?></p>
+                    <p style="color:red;"><strong>Fehler:</strong> <?= $fehler_reg ?></p>
                 <?php endif; ?>
 
                 <?php if (!empty($erfolg_reg)): ?>
-                    <p><strong><?= $erfolg_reg ?></strong></p>
+                    <p style="color:green;"><strong><?= $erfolg_reg ?></strong></p>
                 <?php else: ?>
-                <form method="post" action="sponsor.php">
-                    <input type="hidden" name="action" value="sponsor_register">
+                    <form method="post" action="index.php">
+                        <input type="hidden" name="form_action" value="sponsor_register">
 
-                    <label>Name:</label><br>
-                    <input type="text" name="name">
-                    <br><br>
+                        <label>Name:</label><br>
+                        <input type="text" name="name" required>
+                        <br><br>
 
-                    <label>Passwort:</label><br>
-                    <input type="password" name="passwort">
-                    <br><br>
+                        <label>Passwort:</label><br>
+                        <input type="password" name="passwort" required>
+                        <br><br>
 
-                    <label>Passwort wiederholen:</label><br>
-                    <input type="password" name="passwort2">
-                    <br><br>
+                        <label>Passwort wiederholen:</label><br>
+                        <input type="password" name="passwort2" required>
+                        <br><br>
 
-                    <input type="submit" name="registrieren" value="Registrieren">
-                </form>
+                        <label>Budget (€):</label><br>
+                        <input type="number" name="budget" min="0.01" step="0.01" required>
+                        <br><br>
+
+                        <input type="submit" name="registrieren" value="Registrieren">
+                    </form>
                 <?php endif; ?>
             </td>
 
-            <!-- TRENNLINIE -->
             <td style="border-left: 1px solid black; padding-right:50px;"></td>
 
             <td style="vertical-align:top; padding-left:50px;">
+
                 <h2>Sponsor anmelden</h2>
 
                 <?php if (!empty($fehler_login)): ?>
-                    <p><strong>Fehler:</strong> <?= $fehler_login ?></p>
+                    <p style="color:red;"><strong>Fehler:</strong> <?= $fehler_login ?></p>
                 <?php endif; ?>
 
                 <?php if (!empty($erfolg_login)): ?>
-                    <p><strong><?= $erfolg_login ?></strong></p>
+                    <p style="color:green;"><strong><?= $erfolg_login ?></strong></p>
                     <a href="dashboard_sponsor.php">Zum Sponsor-Bereich</a>
                 <?php else: ?>
-                <form method="post" action="sponsor.php">
-                    <input type="hidden" name="action" value="sponsor_login">
+                    <form method="post" action="index.php">
+                        <input type="hidden" name="form_action" value="sponsor_login">
 
-                    <label>Name:</label><br>
-                    <input type="text" name="login_name">
-                    <br><br>
+                        <label>Name:</label><br>
+                        <input type="text" name="login_name" required>
+                        <br><br>
 
-                    <label>Passwort:</label><br>
-                    <input type="password" name="login_passwort">
-                    <br><br>
+                        <label>Passwort:</label><br>
+                        <input type="password" name="login_passwort" required>
+                        <br><br>
 
-                    <input type="submit" name="anmelden" value="Anmelden">
-                </form>
+                        <input type="submit" name="anmelden" value="Anmelden">
+                    </form>
                 <?php endif; ?>
             </td>
         </tr>
     </table>
 
 </body>
+
 </html>
+<?php ob_end_flush(); ?>
